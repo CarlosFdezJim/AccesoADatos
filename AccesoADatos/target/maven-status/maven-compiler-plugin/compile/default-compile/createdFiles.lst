@@ -16,6 +16,7 @@ Modelo\Equipo.class
 Vista\Vista$24.class
 Vista\Vista$6.class
 Vista\Vista$19.class
+Controlador\EquiposSax.class
 Vista\Vista$21.class
 Controlador\Equipos_Controlador.class
 Vista\Vista$17.class
@@ -25,14 +26,18 @@ Controlador\Jugador_Controlador.class
 Vista\Vista$10.class
 Vista\Vista$12.class
 Vista\Vista$22.class
+Controlador\CrearLigaXml.class
 Vista\Vista$9.class
 Vista\Vista$4.class
+Controlador\CrearEquipoXml.class
 Controlador\Liga_Controlador.class
 Vista\Vista$7.class
+Controlador\GestionContenido.class
 Modelo\Liga.class
 Modelo\Jugador.class
 Controlador\Liga_Controlador$1.class
 Vista\Vista$25.class
+Controlador\CrearJugadorXml.class
 Vista\Vista$2.class
 Vista\Vista$15.class
 Controlador\Equipos_Controlador$1.class

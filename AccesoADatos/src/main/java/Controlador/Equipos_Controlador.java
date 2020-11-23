@@ -22,6 +22,8 @@ import java.io.StreamCorruptedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 
 public class Equipos_Controlador implements ActionListener{
@@ -227,7 +229,7 @@ public class Equipos_Controlador implements ActionListener{
     }
 
     /*=========================================================================*/
-    public void loadDatabaseTeam() throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void loadDatabaseTeam() throws IOException, FileNotFoundException, ClassNotFoundException, ParserConfigurationException, SAXException{
         
         modeloTeam = new DefaultTableModel(){
             @Override
@@ -255,7 +257,7 @@ public class Equipos_Controlador implements ActionListener{
        
     }
     
-        public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException{
+        public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException, SAXException, ParserConfigurationException{
         
         if(crear == true){
             Equipo ObtenerEquipo = new Equipo();
@@ -288,28 +290,30 @@ public class Equipos_Controlador implements ActionListener{
             dataOS.close();  //cerrar stream de salida    
     }
     
-        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException {
+    public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {
     	
-        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichEquipos.dat")));
-
-        int i = 1;
-        try {
-                while (true) { // lectura del fichero
-                        
-                        Equipo equipo =  (Equipo) dataIS.readObject(); // leer un Equipo
-                        System.out.print(i + "=>");
-                        i++;
-                        System.out.printf("ID: %s, Nombre: %s %n",
-                                        equipo.getIDequipo(),equipo.getNombre_eq());
-                        
-                        this.teamArrayList.add(equipo);
-                }
-        } catch (EOFException eo) {
-                System.out.println("FIN DE LECTURA.");
-        } catch (StreamCorruptedException x) {
-        }
-        System.out.println("***********************");  
-        dataIS.close(); // cerrar stream de entrada
+    EquiposSax eqSAX = new EquiposSax();
+    eqSAX.LeerXML();
+            
+//        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichEquipos.dat")));
+//
+//        int i = 1;
+//        try {
+//                while (true) { // lectura del fichero
+//                        
+//                        Equipo equipo = (Equipo) dataIS.readObject(); // leer un Equipo
+//                        System.out.print(i + "=>");
+//                        i++;
+//                        System.out.printf("ID: %s, Nombre: %s %n",equipo.getIDequipo(),equipo.getNombre_eq());
+//                        
+//                        this.teamArrayList.add(equipo);
+//                }
+//        } catch (EOFException eo) {
+//                System.out.println("FIN DE LECTURA.");
+//        } catch (StreamCorruptedException x) {
+//        }
+//        System.out.println("***********************");  
+//        dataIS.close(); // cerrar stream de entrada
         mostrarEnTabla(teamArrayList);
     }
         /*=========================================================================*/

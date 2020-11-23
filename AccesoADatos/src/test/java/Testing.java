@@ -77,5 +77,4 @@ public class Testing {
         jugador.EscribirFichero();
     }
     
-////    public void 
 }

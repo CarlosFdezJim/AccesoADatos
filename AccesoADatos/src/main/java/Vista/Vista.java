@@ -5,14 +5,19 @@
  */
 package Vista;
 
+import Controlador.CrearEquipoXml;
+import Controlador.CrearJugadorXml;
+import Controlador.CrearLigaXml;
 import Controlador.Equipos_Controlador;
 import Controlador.Jugador_Controlador;
 import Controlador.Liga_Controlador;
 import java.io.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import Controlador.GestionContenido;
 
 /**
- *
  * @author Fernández
  */
 public class Vista extends javax.swing.JFrame {    
@@ -799,8 +804,15 @@ public class Vista extends javax.swing.JFrame {
         this.txtClub_Jugadores.setText(this.jComboBoxJugador.getSelectedItem().toString());
     }//GEN-LAST:event_jComboBoxJugadorActionPerformed
 
-    public static void main(String args[]) throws IOException, FileNotFoundException, ClassNotFoundException{
+    public static void main(String args[]) throws IOException, FileNotFoundException, ClassNotFoundException, SAXException, ParserConfigurationException{
        Vista v = new Vista();
+       
+       CrearJugadorXml x = new CrearJugadorXml();
+       x.CrearXML();
+       CrearEquipoXml z = new CrearEquipoXml();
+       z.CrearXML();
+       CrearLigaXml y = new CrearLigaXml();
+       y.CrearXML();
        
        Jugador_Controlador juga_ctr = new Jugador_Controlador(v);
        juga_ctr.LoadDatabasePlayers();
