@@ -15,7 +15,7 @@ import java.io.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
-import Controlador.GestionContenido;
+import Controlador.GestionarFichEquipoXML;
 
 /**
  * @author Fernández

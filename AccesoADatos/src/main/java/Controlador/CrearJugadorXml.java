@@ -31,9 +31,6 @@ public class CrearJugadorXml {
         document.setXmlVersion("1.0"); 
 
            /********************   RECOREMOS FICHERO    **************************/     
-
-            
-
             
             Jugador jg = new Jugador();
             playerArray = jg.DataBasePlayer();

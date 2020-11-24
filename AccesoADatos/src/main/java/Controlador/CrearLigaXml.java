@@ -26,7 +26,7 @@ public class CrearLigaXml {
       try{
         DocumentBuilder builder = factory.newDocumentBuilder();
         DOMImplementation implementation = builder.getDOMImplementation();
-        Document document = implementation.createDocument(null, "Liga", null);
+        Document document = implementation.createDocument(null, "Ligas", null);
         document.setXmlVersion("1.0"); 
 
            /********************   RECOREMOS FICHERO    **************************/     
@@ -53,7 +53,7 @@ public class CrearLigaXml {
 
         /********************   CREAMOS DOM     **************************/
         Source source = new DOMSource(document);
-        Result result = new StreamResult(new java.io.File("Liga.xml"));        
+        Result result = new StreamResult(new java.io.File("Ligas.xml"));        
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(source, result);
 

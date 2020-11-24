@@ -22,6 +22,12 @@ import java.io.StreamCorruptedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 public class Jugador_Controlador implements ActionListener {
@@ -215,7 +221,7 @@ public class Jugador_Controlador implements ActionListener {
 
     /*=========================================================================*/
     
-    public void LoadDatabasePlayers() throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void LoadDatabasePlayers() throws IOException, FileNotFoundException, ClassNotFoundException, SAXException, ParserConfigurationException{
 
         modeloPlayers = new DefaultTableModel(){
             @Override
@@ -240,7 +246,7 @@ public class Jugador_Controlador implements ActionListener {
 
     }
     
-    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException, SAXException, ParserConfigurationException{
         
         if(crear == true){
             Jugador ObtenerJugadores = new Jugador();
@@ -271,28 +277,37 @@ public class Jugador_Controlador implements ActionListener {
             dataOS.close();  //cerrar stream de salida    
     }
     
-        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException {
-    	
-        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichPlayer.dat")));
+        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
 
-        int i = 1;
-        try {
-                while (true) { // lectura del fichero
-                        
-                        Jugador matao =  (Jugador) dataIS.readObject(); // leer un Jugador
-                        System.out.print(i + "=>");
-                        i++;
-                        System.out.printf("ID: %s, Nombre: %s %n",
-                                        matao.getDNI(),matao.getNombre_Jugador());
-                        
-                        this.playerArrayList.add(matao);
-                }
-        } catch (EOFException eo) {
-                System.out.println("FIN DE LECTURA.");
-        } catch (StreamCorruptedException x) {
-        }
-        System.out.println("***********************");  
-        dataIS.close(); // cerrar stream de entrada
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        SAXParser parser = parserFactory.newSAXParser();
+        XMLReader  procesadorXML = parser.getXMLReader();
+        GestionarFichJugadorXML gestor= new GestionarFichJugadorXML();
+        procesadorXML.setContentHandler(gestor);
+        InputSource fileXML = new InputSource("Jugadores.xml"); 
+        procesadorXML.parse(fileXML);
+
+            
+//        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichPlayer.dat")));
+//
+//        int i = 1;
+//        try {
+//                while (true) { // lectura del fichero
+//                        
+//                        Jugador matao =  (Jugador) dataIS.readObject(); // leer un Jugador
+//                        System.out.print(i + "=>");
+//                        i++;
+//                        System.out.printf("ID: %s, Nombre: %s %n",
+//                                        matao.getDNI(),matao.getNombre_Jugador());
+//                        
+//                        this.playerArrayList.add(matao);
+//                }
+//        } catch (EOFException eo) {
+//                System.out.println("FIN DE LECTURA.");
+//        } catch (StreamCorruptedException x) {
+//        }
+//        System.out.println("***********************");  
+//        dataIS.close(); // cerrar stream de entrada
         mostrarEnTabla(playerArrayList);
     }
     /*=========================================================================*/

@@ -22,6 +22,12 @@ import java.io.StreamCorruptedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 public class Liga_Controlador implements ActionListener {
@@ -242,7 +248,7 @@ public class Liga_Controlador implements ActionListener {
     }
 
     /*=========================================================================*/
-    public void LoadDatabaseLeague() throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void LoadDatabaseLeague() throws IOException, FileNotFoundException, ClassNotFoundException, ParserConfigurationException, SAXException{
 
         modeloLeague = new DefaultTableModel(){
             @Override
@@ -271,7 +277,7 @@ public class Liga_Controlador implements ActionListener {
             
     }
     
-    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException, ParserConfigurationException, SAXException{
         
         if(crear == true){
             Liga ObtenerLigas = new Liga();
@@ -303,28 +309,36 @@ public class Liga_Controlador implements ActionListener {
             dataOS.close();  //cerrar stream de salida    
     }
     
-        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException {
-    	
-        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichLigas.dat")));
+        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {
 
-        int i = 1;
-        try {
-                while (true) { // lectura del fichero
-                        
-                        Liga liguilla =  (Liga) dataIS.readObject(); // leer una Liga
-                        System.out.print(i + "=>");
-                        i++;
-                        System.out.printf("ID: %s, Nombre: %s %n",
-                                        liguilla.getID_Liga(),liguilla.getNombre_Liga());
-                        
-                        this.leagueArrayList.add(liguilla);
-                }
-        } catch (EOFException eo) {
-                System.out.println("FIN DE LECTURA.");
-        } catch (StreamCorruptedException x) {
-        }
-        System.out.println("***********************");  
-        dataIS.close(); // cerrar stream de entrada
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        SAXParser parser = parserFactory.newSAXParser();
+        XMLReader  procesadorXML = parser.getXMLReader();
+        GestionarFichLigasXML gestor= new GestionarFichLigasXML();
+        procesadorXML.setContentHandler(gestor);
+        InputSource fileXML = new InputSource("Ligas.xml"); 
+        procesadorXML.parse(fileXML);
+            
+//        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichLigas.dat")));
+//
+//        int i = 1;
+//        try {
+//                while (true) { // lectura del fichero
+//                        
+//                        Liga liguilla =  (Liga) dataIS.readObject(); // leer una Liga
+//                        System.out.print(i + "=>");
+//                        i++;
+//                        System.out.printf("ID: %s, Nombre: %s %n",
+//                                        liguilla.getID_Liga(),liguilla.getNombre_Liga());
+//                        
+//                        this.leagueArrayList.add(liguilla);
+//                }
+//        } catch (EOFException eo) {
+//                System.out.println("FIN DE LECTURA.");
+//        } catch (StreamCorruptedException x) {
+//        }
+//        System.out.println("***********************");  
+//        dataIS.close(); // cerrar stream de entrada
         mostrarEnTabla(leagueArrayList);
     }
 

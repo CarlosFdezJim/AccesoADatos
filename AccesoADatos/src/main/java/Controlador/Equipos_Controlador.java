@@ -23,7 +23,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 public class Equipos_Controlador implements ActionListener{
@@ -292,8 +296,14 @@ public class Equipos_Controlador implements ActionListener{
     
     public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {
     	
-    EquiposSax eqSAX = new EquiposSax();
-    eqSAX.LeerXML();
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        SAXParser parser = parserFactory.newSAXParser();
+        XMLReader  procesadorXML = parser.getXMLReader();
+        GestionarFichEquipoXML gestor= new GestionarFichEquipoXML();
+        procesadorXML.setContentHandler(gestor);
+        InputSource fileXML = new InputSource("Equipos.xml"); 
+        procesadorXML.parse(fileXML);
+       
             
 //        ObjectInputStream dataIS = new ObjectInputStream(new FileInputStream(new File("FichEquipos.dat")));
 //
