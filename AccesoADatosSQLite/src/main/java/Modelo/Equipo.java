@@ -4,11 +4,12 @@
 
 package Modelo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Equipo implements Serializable{
+public class Equipo{
+    
+    public static int cont_ID = 5;
     
     private Integer Num_ID = 0;
     private String ID_Equipo = "";
@@ -20,9 +21,9 @@ public class Equipo implements Serializable{
     public Equipo() {
     }
     
-    public Equipo(Integer Num_ID, String ID, String Nombre, String Ligas, String Numero, String Presupuesto) {
+    public Equipo(String ID, String Nombre, String Ligas, String Numero, String Presupuesto) {
         
-        this.Num_ID = Num_ID;
+        this.Num_ID = cont_ID + 1;
         this.ID_Equipo = ID;
         this.Nombre_Equipo = Nombre;
         this.Liga = Ligas;
@@ -79,16 +80,16 @@ public class Equipo implements Serializable{
     
     public ArrayList DataBaseTeam(){
     
-        ArrayList<Equipo> vectorTeam = new ArrayList<Equipo>();
-            Equipo team1 = new Equipo(1,"GR","Granada CF","LALIGA","33", "25.000.000");
+        ArrayList<Equipo> vectorTeam = new ArrayList<>();
+            Equipo team1 = new Equipo("GR","Granada CF","LALIGA","33", "25.000.000");
             vectorTeam.add(team1);
-            Equipo team2 = new Equipo(2, "RM","Real Madrid CF","LALIGA","33","125.000.000");
+            Equipo team2 = new Equipo("RM","Real Madrid CF","LALIGA","33","125.000.000");
             vectorTeam.add(team2);
-            Equipo team3 = new Equipo(3, "JU","Juventus Turin","SERIEA","33","75.000.000");
+            Equipo team3 = new Equipo("JU","Juventus Turin","SERIEA","33","75.000.000");
             vectorTeam.add(team3);
-            Equipo team4 = new Equipo(4, "MU","Murcia CF","LALIGA","33","6.000.000");
+            Equipo team4 = new Equipo("MU","Murcia CF","LALIGA","33","6.000.000");
             vectorTeam.add(team4);
-            Equipo team5 = new Equipo(5, "BAY","Bayern de Múnich","BUNDESLIGA","33","86.000.000");
+            Equipo team5 = new Equipo("BAY","Bayern de Múnich","BUNDESLIGA","33","86.000.000");
             vectorTeam.add(team5);
             
         return vectorTeam;

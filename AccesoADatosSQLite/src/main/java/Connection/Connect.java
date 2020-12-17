@@ -4,8 +4,6 @@
 
 package Connection;
 
-import Controlador.Jugador_Controlador;
-import Controlador.Liga_Controlador;
 import Modelo.Equipo;
 import Modelo.Jugador;
 import Modelo.Liga;
@@ -21,8 +19,8 @@ import java.util.ArrayList;
 public class Connect {
     
     private Connect conexConnection;
-    private Statement st;
-    private ResultSet rs;
+    public Statement st;
+    public ResultSet rs;
 
     public Connection connect() {
         
@@ -50,12 +48,12 @@ public class Connect {
     /*=========================================================================*/
     /*=================             LEAGUE              =======================*/
     public void createDataBaseLeague(){
-        String query = "CREATE TABLE LIGAS(Num_ID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT NOT NULL, Nombre TEXT NOT NULL, Num_Equipos TEXT NOT NULL, Num_Ligas TEXT NOT NULL, Federacion TEXT NOT NULL);";
+        String query = "CREATE TABLE IF NOT EXISTS Ligas (Num_ID TEXT PRIMARY KEY, ID TEXT, Nombre TEXT, Num_Equipos TEXT, Num_Ligas TEXT, Federacion TEXT);";
         Connection con = null;
         try{
             con = this.connect();
-            st = con.createStatement();
-            rs =  st.executeQuery(query);
+            Statement st = con.createStatement();
+            st.executeQuery(query);
             
             System.out.println("Conexión terminada...");
             con.close();
@@ -64,7 +62,7 @@ public class Connect {
         }
     }
     public void deleteRowDataBaseLeague(int Num_ID) {
-        String sql = "DELETE FROM LIGAS WHERE Num_ID = ?";
+        String sql = "DELETE FROM Ligas WHERE Num_ID = ?";
         Connection con = null;
         try {
             con = this.connect();
@@ -81,10 +79,9 @@ public class Connect {
     }
     /*=========================================================================*/
     
-    public void insertDataLeague(String ID,String Nombre,String Num_Equipos,String Num_Ligas,String Federacion){
-        String insert = "INSERT INTO LIGAS (Num_ID, ID, Nombre, Num_Equipos, Num_Ligas, Federacion) VALUES (?,?,?,?,?,?);";
+    public void insertDataLeague(int Num_ID, String ID,String Nombre,String Num_Equipos,String Num_Ligas,String Federacion){
+        String insert = "INSERT INTO Ligas (Num_ID, ID, Nombre, Num_Equipos, Num_Ligas, Federacion) VALUES (?,?,?,?,?,?);";
         Connection con = null;
-        int Num_ID = Liga_Controlador.leagueArrayList.size() + 1;
         
         try {
             con = this.connect();
@@ -105,7 +102,8 @@ public class Connect {
     }
     
      public void updateDataLeague(String ID, String Nombre,String Num_Equipos,String Num_Ligas,String Federacion) {
-        String sql = "UPDATE LIGAS SET Nombre = ? , "
+        String sql = "UPDATE Ligas SET ID = ?,"
+                + "Nombre = ? , "
                 + "Num_Equipos = ? ,"
                 + "Num_Ligas = ? ,"
                 + "Federacion = ? "
@@ -117,11 +115,12 @@ public class Connect {
             PreparedStatement pstmt = con.prepareStatement(sql);
 
             // set the corresponding param
-            pstmt.setString(1, Nombre);
-            pstmt.setString(2, Num_Equipos);
-            pstmt.setString(3, Num_Ligas);
-            pstmt.setString(4, Federacion);
-            pstmt.setString(5, ID);
+            pstmt.setString(1, ID);
+            pstmt.setString(2, Nombre);
+            pstmt.setString(3, Num_Equipos);
+            pstmt.setString(4, Num_Ligas);
+            pstmt.setString(5, Federacion);
+            pstmt.setString(6, ID);
             
             // update 
             pstmt.executeUpdate();
@@ -132,7 +131,7 @@ public class Connect {
     }
     /*=========================================================================*/
     public ArrayList mostrarTablaLeague(ArrayList <Liga> leagueArrayList){
-        String full = "SELECT * FROM LIGAS";
+        String full = "SELECT * FROM Ligas";
         Connection con = null;
         
         try {
@@ -161,22 +160,22 @@ public class Connect {
     /*=========================================================================*/
     public void DataBaseLeague(){
         
-        insertDataLeague("LALIGA", "La Liga", "20", "9", "Española");
-        insertDataLeague("LIGUE1", "Ligue 1", "20", "9", "Francesa");
-        insertDataLeague("SERIEA", "Serie A", "20", "9", "Italiana");
-        insertDataLeague("BUNDESLIGA", "Bundesliga", "20", "6", "Alemana");
-        insertDataLeague("PREMIER", "Premier League", "20", "4", "Inglesa");
+        insertDataLeague(1, "LALIGA", "La Liga", "20", "9", "Española");
+        insertDataLeague(2, "LIGUE1", "Ligue 1", "20", "9", "Francesa");
+        insertDataLeague(3, "SERIEA", "Serie A", "20", "9", "Italiana");
+        insertDataLeague(4, "BUNDESLIGA", "Bundesliga", "20", "6", "Alemana");
+        insertDataLeague(5, "PREMIER", "Premier League", "20", "4", "Inglesa");
 
     }
     /*=========================================================================*/
     /*=================             PLAYER              =======================*/
     public void createDataBasePlayer(){
-        String query = "CREATE TABLE PLAYERS (Num_ID INTEGER PRIMARY KEY AUTOINCREMENT, DNI TEXT NOT NULL, Nombre_Jugador TEXT NOT NULL, Club TEXT NOT NULL, Posicion TEXT NOT NULL, Dorsal TEXT NOT NULL);";
+        String query = "CREATE TABLE IF NOT EXISTS Jugadores (Num_ID TEXT PRIMARY KEY , DNI TEXT , Nombre_Jugador TEXT, Club TEXT , Posicion TEXT , Dorsal TEXT);";
         Connection con = null;
         try{
             con = this.connect();
-            st = con.createStatement();
-            rs =  st.executeQuery(query);
+            Statement st = con.createStatement();
+            st.executeQuery(query);
             
             System.out.println("Conexión terminada...");
             con.close();
@@ -185,7 +184,7 @@ public class Connect {
         }
     }
     public void deleteRowDataBasePlayer(int Num_ID) {
-        String sql = "DELETE FROM PLAYERS WHERE Num_ID = ?";
+        String sql = "DELETE FROM Jugadores WHERE Num_ID = ?";
         Connection con = null;
         try {
             con = this.connect();
@@ -202,10 +201,9 @@ public class Connect {
     }
     /*=========================================================================*/
     
-    public void insertDataPlayer(String DNI,String Nombre_Jugador,String Club,String Posicion,String Dorsal){
-        String insert = "INSERT INTO PLAYERS (Num_ID, DNI, Nombre_Jugador, Club, Posicion, Dorsal) VALUES (?,?,?,?,?,?);";
+    public void insertDataPlayer(int Num_ID, String DNI,String Nombre_Jugador,String Club,String Posicion,String Dorsal){
+        String insert = "INSERT INTO Jugadores (Num_ID, DNI, Nombre_Jugador, Club, Posicion, Dorsal) VALUES (?,?,?,?,?,?);";
         Connection con = null;
-        int Num_ID = Jugador_Controlador.playerArrayList.size() + 1;
         
         try {
             con = this.connect();
@@ -218,7 +216,7 @@ public class Connect {
                 pstmt.setString(6, Dorsal);
                 
                 pstmt.executeUpdate();
-                System.out.println("Insertada Liga " + Nombre_Jugador);
+                System.out.println("Insertado Jugador " + Nombre_Jugador);
                 con.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -226,7 +224,8 @@ public class Connect {
     }
     
      public void updateDataPlayer(String DNI,String Nombre_Jugador,String Club,String Posicion,String Dorsal) {
-        String sql = "UPDATE PLAYERS SET Nombre_Jugador = ? , "
+        String sql = "UPDATE Jugadores SET DNI = ?,"
+                + "Nombre_Jugador = ? , "
                 + "Club = ? ,"
                 + "Posicion = ? ,"
                 + "Dorsal = ? "
@@ -238,11 +237,12 @@ public class Connect {
             PreparedStatement pstmt = con.prepareStatement(sql);
 
             // set the corresponding param
-            pstmt.setString(1, Nombre_Jugador);
-            pstmt.setString(2, Club);
-            pstmt.setString(3, Posicion);
-            pstmt.setString(4, Dorsal);
-            pstmt.setString(5, DNI);
+            pstmt.setString(1, DNI);
+            pstmt.setString(2, Nombre_Jugador);
+            pstmt.setString(3, Club);
+            pstmt.setString(4, Posicion);
+            pstmt.setString(5, Dorsal);
+            pstmt.setString(6, DNI);
             
             // update 
             pstmt.executeUpdate();
@@ -253,7 +253,7 @@ public class Connect {
     }
     /*=========================================================================*/
     public ArrayList mostrarTablaPlayer(ArrayList <Jugador> playerArrayList){
-        String full = "SELECT * FROM PLAYERS";
+        String full = "SELECT * FROM Jugadores";
         Connection con = null;
         
         try {
@@ -282,21 +282,21 @@ public class Connect {
     /*=========================================================================*/
     public void DataBasePlayer(){
         
-        insertDataPlayer("77777777C","Cristiano Ronaldo","Juventus Turin","Delantero","7");
-        insertDataPlayer("22222222I","Isco","Real Madrid CF","Mediapunta","22");
-        insertDataPlayer("15151515F","Federico Valverde","Real Madrid CF","Mediocentro","15");
-        insertDataPlayer("11111111R","Rui Silva","Granada CF","Portero","1");
+        insertDataPlayer(1, "77777777C","Cristiano Ronaldo","Juventus Turin","Delantero","7");
+        insertDataPlayer(2, "22222222I","Isco","Real Madrid CF","Mediapunta","22");
+        insertDataPlayer(3, "15151515F","Federico Valverde","Real Madrid CF","Mediocentro","15");
+        insertDataPlayer(4, "11111111R","Rui Silva","Granada CF","Portero","1");
 
     }
     /*=========================================================================*/
     /*=================             TEAMS              =======================*/
     public void createDataBaseTeam(){
-        String query = "CREATE TABLE TEAMS (Num_ID INTEGER PRIMARY KEY AUTOINCREMENT, ID_Equipo TEXT NOT NULL, Nombre_Equipo TEXT NOT NULL, Liga TEXT NOT NULL, Num_Jugadores TEXT NOT NULL, Presupuesto TEXT NOT NULL);";
+        String query = "CREATE TABLE IF NOT EXISTS Equipos (Num_ID INTEGER PRIMARY KEY, ID_Equipo TEXT NOT NULL, Nombre_Equipo TEXT NOT NULL, Liga TEXT NOT NULL, Num_Jugadores TEXT NOT NULL, Presupuesto TEXT NOT NULL);";
         Connection con = null;
         try{
             con = this.connect();
             st = con.createStatement();
-            rs =  st.executeQuery(query);
+            st.executeQuery(query);
             
             System.out.println("Conexión terminada...");
             con.close();
@@ -305,7 +305,7 @@ public class Connect {
         }
     }
     public void deleteRowDataBaseTeam(int Num_ID) {
-        String sql = "DELETE FROM TEAMS WHERE Num_ID = ?";
+        String sql = "DELETE FROM Equipos WHERE Num_ID = ?";
         Connection con = null;
         try {
             con = this.connect();
@@ -322,10 +322,9 @@ public class Connect {
     }
     /*=========================================================================*/
     
-    public void insertDataTeam(String ID_Equipo,String Nombre_Equipo,String Liga,String Num_Jugadores,String Presupuesto){
-        String insert = "INSERT INTO TEAMS (Num_ID, ID_Equipo, Nombre_Equipo, Liga, Num_Jugadores, Presupuesto) VALUES (?,?,?,?,?,?);";
+    public void insertDataTeam(int Num_ID, String ID_Equipo,String Nombre_Equipo,String Liga,String Num_Jugadores,String Presupuesto){
+        String insert = "INSERT INTO Equipos (Num_ID, ID_Equipo, Nombre_Equipo, Liga, Num_Jugadores, Presupuesto) VALUES (?,?,?,?,?,?);";
         Connection con = null;
-        int Num_ID = Jugador_Controlador.playerArrayList.size() + 1;
         
         try {
             con = this.connect();
@@ -346,7 +345,8 @@ public class Connect {
     }
     
      public void updateDataTeam(String ID_Equipo,String Nombre_Equipo,String Liga,String Num_Jugadores,String Presupuesto) {
-        String sql = "UPDATE TEAMS SET Nombre_Equipo = ? , "
+        String sql = "UPDATE Equipos SET ID_Equipo = ?,"
+                + "Nombre_Equipo = ? ,"
                 + "Liga = ? ,"
                 + "Num_Jugadores = ? ,"
                 + "Presupuesto = ? "
@@ -373,7 +373,7 @@ public class Connect {
     }
     /*=========================================================================*/
     public ArrayList mostrarTablaTeam(ArrayList <Equipo> teamArrayList){
-        String full = "SELECT * FROM TEAMS";
+        String full = "SELECT * FROM Equipos";
         Connection con = null;
         
         try {
@@ -402,11 +402,11 @@ public class Connect {
     /*=========================================================================*/
     public void DataBaseTeam(){
         
-        insertDataPlayer("GR","Granada CF","LALIGA","33", "25.000.000");
-        insertDataPlayer("RM","Real Madrid CF","LALIGA","33","125.000.000");
-        insertDataPlayer("JU","Juventus Turin","SERIEA","33","75.000.000");
-        insertDataPlayer("MU","Murcia CF","LALIGA","33","6.000.000");
-        insertDataPlayer("BAY","Bayern de Múnich","BUNDESLIGA","33","86.000.000");
+        insertDataTeam(1, "GR","Granada CF","LALIGA","33", "25.000.000");
+        insertDataTeam(2, "RM","Real Madrid CF","LALIGA","33","125.000.000");
+        insertDataTeam(3, "JU","Juventus Turin","SERIEA","33","75.000.000");
+        insertDataTeam(4, "MU","Murcia CF","LALIGA","33","6.000.000");
+        insertDataTeam(5, "BAY","Bayern de Múnich","BUNDESLIGA","33","86.000.000");
 
     }
     /*=========================================================================*/

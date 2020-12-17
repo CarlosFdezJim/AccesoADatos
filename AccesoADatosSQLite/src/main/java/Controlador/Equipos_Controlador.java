@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -78,7 +77,7 @@ public class Equipos_Controlador implements ActionListener{
             modeloTeam.addRow(datos);
             
             //Insert to BD
-            con.insertDataTeam(this.MiVista.txtID_Equipos.getText(), this.MiVista.txtNombre_Equipos.getText(), this.MiVista.txtLiga_Equipos.getText(), this.MiVista.txtNumJugadores_Equipos.getText(), this.MiVista.txtPresupuesto_Equipos.getText());        
+            con.insertDataTeam(eq1.getNum_ID(),this.MiVista.txtID_Equipos.getText(), this.MiVista.txtNombre_Equipos.getText(), this.MiVista.txtLiga_Equipos.getText(), this.MiVista.txtNumJugadores_Equipos.getText(), this.MiVista.txtPresupuesto_Equipos.getText());        
             mostrarEnTabla(teamArrayList);
         }
         
@@ -109,7 +108,7 @@ public class Equipos_Controlador implements ActionListener{
         modeloTeam.setValueAt(Presupuesto, MiVista.jTableEquipos.getSelectedRow(), 4);
         
         con.updateDataTeam(ID, Nombre, Liga_Equipos, NumJugadores, Presupuesto);
-        mostrarEnTabla(teamArrayList);
+        
         JOptionPane.showMessageDialog(MiVista, "Update Successfully...");
     }
     
@@ -124,9 +123,10 @@ public class Equipos_Controlador implements ActionListener{
             }
         }
         if(encontrado == false){
+            con.deleteRowDataBaseLeague(teamArrayList.get(fila).getNum_ID());//elimino de la base de datos.
             modeloTeam.removeRow(fila);//elimino de la tabla
             teamArrayList.remove(fila);//elimino del arraylist
-            con.deleteRowDataBaseLeague(teamArrayList.get(fila).getNum_ID());//elimino de la base de datos.
+            
             deleteTextView_Equipos();
         }else{
             JOptionPane.showMessageDialog(MiVista, "No se puede eliminar esta Equipo porque tiene jugadores relacionados.");
@@ -248,7 +248,7 @@ public class Equipos_Controlador implements ActionListener{
             }
         };
         
-        this.MiVista.jTableEquipos.setModel(modeloTeam);
+        
         
         ArrayList<String> nombreColumnaTeam = new ArrayList<String>();
             nombreColumnaTeam.add("ID");
@@ -260,6 +260,8 @@ public class Equipos_Controlador implements ActionListener{
         for(String columna: nombreColumnaTeam){
             modeloTeam.addColumn(columna);
         }
+        
+        this.MiVista.jTableEquipos.setModel(modeloTeam);
         
         visibleControlTextView_Equipos(false);
         cargarDataBaseOLeerFichero(true);

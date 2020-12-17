@@ -806,10 +806,10 @@ public class Vista extends javax.swing.JFrame {
        
        Liga_Controlador liga_ctr = new Liga_Controlador(v);
        liga_ctr.LoadDatabaseLeague();
-//       Equipos_Controlador equ_ctr = new Equipos_Controlador(v);
-//       equ_ctr.loadDatabaseTeam();
-//       Jugador_Controlador juga_ctr = new Jugador_Controlador(v);
-//       juga_ctr.LoadDatabasePlayers();
+       Equipos_Controlador equ_ctr = new Equipos_Controlador(v);
+       equ_ctr.loadDatabaseTeam();
+       Jugador_Controlador juga_ctr = new Jugador_Controlador(v);
+       juga_ctr.LoadDatabasePlayers();
        
        
        v.setVisible(true);

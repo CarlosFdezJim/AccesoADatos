@@ -61,12 +61,7 @@ public class Liga_Controlador implements ActionListener {
             JOptionPane.showMessageDialog(MiVista, "El ID ya está introducido, NO se han actualizado los datos");
             
         }else{
-            Liga lg1 = new Liga();
-            lg1.setID_Liga(this.MiVista.txtID_Ligas.getText());
-            lg1.setNombre_Liga(this.MiVista.txtNombre_Ligas.getText());
-            lg1.setNum_Equipos(this.MiVista.txtNumEquipos_Ligas.getText());
-            lg1.setNum_Ligas(this.MiVista.txtNumLigas_Ligas.getText());
-            lg1.setFederacion(this.MiVista.txtFederacion_Ligas.getText());
+            Liga lg1 = new Liga(this.MiVista.txtID_Ligas.getText(),this.MiVista.txtID_Ligas.getText(), this.MiVista.txtNombre_Ligas.getText(), this.MiVista.txtNumEquipos_Ligas.getText(), this.MiVista.txtFederacion_Ligas.getText());
             leagueArrayList.add(lg1);
 
             String[] datos = new String[5];
@@ -79,7 +74,7 @@ public class Liga_Controlador implements ActionListener {
             modeloLeague.addRow(datos);
             
             //Insert to DB
-            con.insertDataLeague(this.MiVista.txtID_Ligas.getText(), this.MiVista.txtNombre_Ligas.getText(), this.MiVista.txtNumEquipos_Ligas.getText(), this.MiVista.txtNumLigas_Ligas.getText(), this.MiVista.txtFederacion_Ligas.getText());        
+            con.insertDataLeague(lg1.getNum_ID(),this.MiVista.txtID_Ligas.getText(), this.MiVista.txtNombre_Ligas.getText(), this.MiVista.txtNumEquipos_Ligas.getText(), this.MiVista.txtNumLigas_Ligas.getText(), this.MiVista.txtFederacion_Ligas.getText());        
             mostrarEnTabla(leagueArrayList);
         }
     }
@@ -125,9 +120,10 @@ public class Liga_Controlador implements ActionListener {
             }
         }
         if(encontrado == false){
+            con.deleteRowDataBaseLeague(leagueArrayList.get(fila).getNum_ID());//elimino de la base de datos.
             modeloLeague.removeRow(fila);
             leagueArrayList.remove(fila);//elimino del arraylist
-            con.deleteRowDataBaseLeague(leagueArrayList.get(fila).getNum_ID());//elimino de la base de datos.
+            
             deleteTextView_Liga();
         }else{
             JOptionPane.showMessageDialog(MiVista, "No se puede eliminar esta Liga porque tiene equipos relacionados.");
@@ -203,6 +199,7 @@ public class Liga_Controlador implements ActionListener {
             }
             insertar = false;
             visibleControlTextView_Liga(false);
+            actualizarComboBoxEquipos();
         }
         
         if(evento.getSource() == this.MiVista.jButtonCancelar_Ligas){
@@ -213,6 +210,7 @@ public class Liga_Controlador implements ActionListener {
         if(evento.getSource() == this.MiVista.jButtonInsertar_Ligas){
             insertar = true;
             visibleControlTextView_Liga(true);
+            actualizarComboBoxEquipos();
         }
         
         if(evento.getSource() == this.MiVista.jButtonEliminar_Ligas){
@@ -228,6 +226,7 @@ public class Liga_Controlador implements ActionListener {
             }
             deleteTextView_Liga();
             visibleControlTextView_Liga(true);
+            actualizarComboBoxEquipos();
         }
         
         if(evento.getSource() == this.MiVista.jButtonModificar_Ligas){
@@ -237,9 +236,10 @@ public class Liga_Controlador implements ActionListener {
                 Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
            visibleControlTextView_Liga(true);
+           actualizarComboBoxEquipos();
         }
         deleteTextView_Liga();
-        actualizarComboBoxEquipos();
+        //actualizarComboBoxEquipos();
          
     }
 
@@ -273,21 +273,19 @@ public class Liga_Controlador implements ActionListener {
             
     }
     
-    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, FileNotFoundException, ClassNotFoundException, ParserConfigurationException, SAXException{
+    public void cargarDataBaseOLeerFichero(boolean crear) throws IOException, ClassNotFoundException{
         
         Connect con = new Connect();
         
         if(crear == true){
-            con.createDataBaseLeague();
-            con.DataBaseLeague();
+            //con.createDataBaseLeague();
+            //con.DataBaseLeague();
             leagueArrayList = con.mostrarTablaLeague(leagueArrayList);
             this.mostrarEnTabla(leagueArrayList);
-//            EscribirFichero();
         }else{ 
             leagueArrayList = con.mostrarTablaLeague(leagueArrayList);
             this.mostrarEnTabla(leagueArrayList);
             actualizarComboBoxEquipos();
-//            LeerFichero();
          }
     }
     

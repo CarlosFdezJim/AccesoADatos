@@ -4,11 +4,12 @@
 
 package Modelo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Jugador implements Serializable{
+public class Jugador{
+    
+    public static int cont_ID = 4;
 
     private Integer Num_ID = 0;
     private String DNI = "";
@@ -21,8 +22,8 @@ public class Jugador implements Serializable{
        
    }
    
-   public Jugador(Integer Num_ID,String DNI, String Nombre, String Club, String Pos, String Dorsal){
-       this.Num_ID = Num_ID;
+   public Jugador(String DNI, String Nombre, String Club, String Pos, String Dorsal){
+       this.Num_ID = cont_ID + 1;
        this.DNI = DNI;
        this.Nombre_Jugador = Nombre;
        this.Club = Club;
@@ -80,14 +81,14 @@ public class Jugador implements Serializable{
     
     public ArrayList DataBasePlayer(){
     
-        ArrayList<Jugador>vectorPlayer = new ArrayList<Jugador>();
-            Jugador player1 = new Jugador(1,"77777777C","Cristiano Ronaldo","Juventus Turin","Delantero","7");
+        ArrayList<Jugador>vectorPlayer = new ArrayList<>();
+            Jugador player1 = new Jugador("77777777C","Cristiano Ronaldo","Juventus Turin","Delantero","7");
             vectorPlayer.add(player1);
-            Jugador player2 = new Jugador(2, "22222222I","Isco","Real Madrid CF","Mediapunta","22");
+            Jugador player2 = new Jugador("22222222I","Isco","Real Madrid CF","Mediapunta","22");
             vectorPlayer.add(player2);
-            Jugador player3 = new Jugador(3, "15151515F","Federico Valverde","Real Madrid CF","Mediocentro","15");
+            Jugador player3 = new Jugador("15151515F","Federico Valverde","Real Madrid CF","Mediocentro","15");
             vectorPlayer.add(player3);
-            Jugador player4 = new Jugador(4, "11111111R","Rui Silva","Granada CF","Portero","1");
+            Jugador player4 = new Jugador("11111111R","Rui Silva","Granada CF","Portero","1");
             vectorPlayer.add(player4);
             
         return vectorPlayer;

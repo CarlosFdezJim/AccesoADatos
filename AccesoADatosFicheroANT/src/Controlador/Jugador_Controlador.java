@@ -29,6 +29,9 @@ public class Jugador_Controlador implements ActionListener {
     Vista MiVista;
     DefaultTableModel modeloPlayers;
     public static ArrayList<Jugador> playerArrayList = new ArrayList<Jugador>();
+    boolean insertar = false;
+    boolean modificar = false;
+    boolean eliminar = false;
  
     public Jugador_Controlador(Vista MiVista) {
         this.MiVista = MiVista;

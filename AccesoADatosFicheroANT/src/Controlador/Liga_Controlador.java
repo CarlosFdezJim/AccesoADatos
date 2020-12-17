@@ -80,7 +80,6 @@ public class Liga_Controlador implements ActionListener {
 
             modeloLeague.addRow(datos);
             mostrarEnTabla(leagueArrayList);
-            EscribirFichero();
         }
     }
     
@@ -106,8 +105,6 @@ public class Liga_Controlador implements ActionListener {
         modeloLeague.setValueAt(NumEquipos, MiVista.jTableLigas.getSelectedRow(), 2);
         modeloLeague.setValueAt(NumLigas, MiVista.jTableLigas.getSelectedRow(), 3);
         modeloLeague.setValueAt(Federacion, MiVista.jTableLigas.getSelectedRow(), 4);
-        
-        EscribirFichero();
         
         JOptionPane.showMessageDialog(MiVista, "Update Successfully...");
     }
@@ -197,14 +194,15 @@ public class Liga_Controlador implements ActionListener {
                 }
             }
             insertar = false;
+            visibleControlTextView_Liga(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonCancelar_Ligas){
             deleteTextView_Liga();
+            visibleControlTextView_Liga(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonInsertar_Ligas){
-//            mostrarEnTabla(leagueArrayList);
             insertar = true;
             visibleControlTextView_Liga(true);
         }
@@ -225,9 +223,11 @@ public class Liga_Controlador implements ActionListener {
             } catch (IOException ex) {
                 Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
-           visibleControlTextView_Liga(true);
+            visibleControlTextView_Liga(true);
         }
+        
          deleteTextView_Liga();
+         visibleControlTextView_Liga(true);
          mostrarEnTabla(leagueArrayList);
          actualizarComboBoxEquipos();
          
@@ -236,9 +236,7 @@ public class Liga_Controlador implements ActionListener {
             
         } catch (IOException ex) {
             Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        //         this.MiVista.jTableLigas.setEnabled(true);
+        }        
     }
 
     /*=========================================================================*/
@@ -264,8 +262,9 @@ public class Liga_Controlador implements ActionListener {
             modeloLeague.addColumn(columna);
         }
             
-            visibleControlTextView_Liga(true);
+            visibleControlTextView_Liga(false);
             cargarDataBaseOLeerFichero(true);
+            actualizarComboBoxEquipos();
             
     }
     
@@ -292,8 +291,6 @@ public class Liga_Controlador implements ActionListener {
           FileOutputStream fileout = new FileOutputStream(fichero,false);  //crea el flujo de salida
            //conecta el flujo de bytes al flujo de datos
           ObjectOutputStream dataOS = new ObjectOutputStream(fileout);  
-          
-          Object[] vectorObject = new Object[5];
 
             for(int i = 0; i < leagueArrayList.size();i++){
                 dataOS.writeObject(leagueArrayList.get(i));

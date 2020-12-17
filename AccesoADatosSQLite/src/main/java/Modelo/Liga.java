@@ -8,8 +8,10 @@ import java.util.ArrayList;
 
 
 public class Liga {
+    
+    public static int cont_ID = 6;
 
-    private Integer Num_ID = 0;
+    private int Num_ID = 0;
     private String ID_Liga = "";
     private String Nombre_Liga = "";
     private String Num_Equipos = "";
@@ -19,8 +21,8 @@ public class Liga {
     public Liga() {
     }
 
-    public Liga(Integer Num_ID, String ID,String Nombre, String Numero_Equipos, String Numero_ligas, String Federacion){
-        this.Num_ID = Num_ID;
+    public Liga(String ID,String Nombre, String Numero_Equipos, String Numero_ligas, String Federacion){
+        this.Num_ID = cont_ID + 1;
         this.ID_Liga = ID;
         this.Nombre_Liga = Nombre;
         this.Num_Equipos = Numero_Equipos;
@@ -79,15 +81,15 @@ public class Liga {
     public ArrayList DataBaseLeague(){
         
         ArrayList<Liga> vectorLeague = new ArrayList<>();
-            Liga league1 = new Liga(1,"LALIGA","LaLiga Santander","20","9", "Española");
+            Liga league1 = new Liga("LALIGA","LaLiga Santander","20","9", "Española");
             vectorLeague.add(league1);
-            Liga league2 = new Liga(2, "LIGUE1","Ligue 1","20","9","Francesa");
+            Liga league2 = new Liga("LIGUE1","Ligue 1","20","9","Francesa");
             vectorLeague.add(league2);
-            Liga league3 = new Liga(3, "SERIEA","Serie A","20","9","Italiana");
+            Liga league3 = new Liga("SERIEA","Serie A","20","9","Italiana");
             vectorLeague.add(league3);
-            Liga league4 = new Liga(4, "BUNDESLIGA","Bundesliga","20","6","Alemana");
+            Liga league4 = new Liga("BUNDESLIGA","Bundesliga","20","6","Alemana");
             vectorLeague.add(league4);
-            Liga league5 = new Liga(5, "PREMIER","Premier League","20","4","Inglesa");
+            Liga league5 = new Liga("PREMIER","Premier League","20","4","Inglesa");
             vectorLeague.add(league5);
             
         return vectorLeague;

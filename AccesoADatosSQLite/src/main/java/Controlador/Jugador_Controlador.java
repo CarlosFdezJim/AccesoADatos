@@ -58,13 +58,7 @@ public class Jugador_Controlador implements ActionListener {
         if(this.MiVista.txtDNI_Jugadores.getText().equals(this.playerArrayList.get(fila).getDNI())){ 
             JOptionPane.showMessageDialog(MiVista, "El DNI ya está en uso \nNo se puede insertar ese jugador");
         }else{
-            Jugador jg1 = new Jugador();
-            jg1.setDNI(this.MiVista.txtDNI_Jugadores.getText());
-            jg1.setNombre_Jugador(this.MiVista.txtNombre_Jugadores.getText());
-            jg1.setClub(this.MiVista.txtClub_Jugadores.getText());
-            jg1.setPosicion(this.MiVista.txtPosicion_Jugadores.getText());
-            jg1.setDorsal(this.MiVista.txtDorsal_Jugadores.getText());
-
+            Jugador jg1 = new Jugador(this.MiVista.txtDNI_Jugadores.getText(),this.MiVista.txtNombre_Jugadores.getText(), this.MiVista.txtClub_Jugadores.getText(),this.MiVista.txtPosicion_Jugadores.getText(), this.MiVista.txtDorsal_Jugadores.getText());
             playerArrayList.add(jg1);
 
             String[] datos = new String[5];
@@ -77,7 +71,7 @@ public class Jugador_Controlador implements ActionListener {
             modeloPlayers.addRow(datos);
             
             //Insert to DB
-            con.insertDataPlayer(this.MiVista.txtDNI_Jugadores.getText(), this.MiVista.txtNombre_Jugadores.getText(), this.MiVista.txtClub_Jugadores.getText(), this.MiVista.txtPosicion_Jugadores.getText(), this.MiVista.txtDorsal_Jugadores.getText());
+            con.insertDataPlayer(jg1.getNum_ID(),this.MiVista.txtDNI_Jugadores.getText(), this.MiVista.txtNombre_Jugadores.getText(), this.MiVista.txtClub_Jugadores.getText(), this.MiVista.txtPosicion_Jugadores.getText(), this.MiVista.txtDorsal_Jugadores.getText());
             mostrarEnTabla(playerArrayList);
         }
     }
@@ -115,10 +109,10 @@ public class Jugador_Controlador implements ActionListener {
         int fila = MiVista.jTableJugadores.getSelectedRow();
         Connect con = new Connect();
         
-        
+        con.deleteRowDataBasePlayer(playerArrayList.get(fila).getNum_ID());//elimino de la base de datos.
         modeloPlayers.removeRow(fila);
         playerArrayList.remove(fila);//elimino del arraylist
-        con.deleteRowDataBaseLeague(playerArrayList.get(fila).getNum_ID());//elimino de la base de datos.
+        
     }
     /*=========================================================================*/
     public void deleteTextView_Jugador(){
@@ -256,8 +250,8 @@ public class Jugador_Controlador implements ActionListener {
         Connect con = new Connect();
         
         if(crear == true){
-            con.createDataBaseLeague();
-            con.DataBaseLeague();
+            //con.createDataBasePlayer();
+            //con.DataBasePlayer();
             playerArrayList = con.mostrarTablaPlayer(playerArrayList);
             this.mostrarEnTabla(playerArrayList);
         }else{
