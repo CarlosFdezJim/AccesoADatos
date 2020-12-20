@@ -11,6 +11,7 @@ import Controlador.CrearLigaXml;
 import Controlador.Equipos_Controlador;
 import Controlador.Jugador_Controlador;
 import Controlador.Liga_Controlador;
+import static Controlador.Liga_Controlador.leagueArrayList;
 import java.io.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.ParserConfigurationException;
@@ -796,6 +797,7 @@ public class Vista extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNumEquipos_LigasActionPerformed
 
     private void jComboBoxEquiposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxEquiposActionPerformed
+
         this.txtLiga_Equipos.setText(this.jComboBoxEquipos.getSelectedItem().toString());
     }//GEN-LAST:event_jComboBoxEquiposActionPerformed
 
@@ -806,12 +808,12 @@ public class Vista extends javax.swing.JFrame {
     public static void main(String args[]) throws IOException, FileNotFoundException, ClassNotFoundException, SAXException, ParserConfigurationException{
        Vista v = new Vista();
        
-       CrearJugadorXml x = new CrearJugadorXml();
-       x.CrearXML();
-       CrearEquipoXml z = new CrearEquipoXml();
-       z.CrearXML();
-       CrearLigaXml y = new CrearLigaXml();
-       y.CrearXML();
+//       CrearJugadorXml x = new CrearJugadorXml();
+//       x.CrearXML();
+//       CrearEquipoXml z = new CrearEquipoXml();
+//       z.CrearXML();
+//       CrearLigaXml y = new CrearLigaXml();
+//       y.CrearXML();
        
        Jugador_Controlador juga_ctr = new Jugador_Controlador(v);
        juga_ctr.LoadDatabasePlayers();

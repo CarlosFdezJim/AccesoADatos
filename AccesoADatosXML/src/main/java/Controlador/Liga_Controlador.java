@@ -4,23 +4,32 @@
 
 package Controlador;
 
+import static Controlador.CrearLigaXml.CrearElemento;
 import Modelo.Liga;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import Vista.Vista;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -126,6 +135,7 @@ public class Liga_Controlador implements ActionListener {
         if(encontrado == false){
             modeloLeague.removeRow(fila);
             leagueArrayList.remove(fila);//elimino del arraylist
+            EscribirFichero();
         }else{
             JOptionPane.showMessageDialog(MiVista, "No se puede eliminar esta Liga porque tiene equipos relacionados.");
         }
@@ -199,10 +209,17 @@ public class Liga_Controlador implements ActionListener {
                 }
             }
             insertar = false;
+            visibleControlTextView_Liga(false);
+            try {
+                EscribirFichero();
+            } catch (IOException ex) {
+                Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         if(evento.getSource() == this.MiVista.jButtonCancelar_Ligas){
             deleteTextView_Liga();
+            visibleControlTextView_Liga(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonInsertar_Ligas){
@@ -218,7 +235,7 @@ public class Liga_Controlador implements ActionListener {
                 Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
             deleteTextView_Liga();
-            visibleControlTextView_Liga(true);
+            visibleControlTextView_Liga(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonModificar_Ligas){
@@ -227,7 +244,12 @@ public class Liga_Controlador implements ActionListener {
             } catch (IOException ex) {
                 Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
-           visibleControlTextView_Liga(true);
+           visibleControlTextView_Liga(false);
+           try {
+                EscribirFichero();
+            } catch (IOException ex) {
+                Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
          deleteTextView_Liga();
          mostrarEnTabla(leagueArrayList);
@@ -239,8 +261,13 @@ public class Liga_Controlador implements ActionListener {
         } catch (IOException ex) {
             Logger.getLogger(Liga_Controlador.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        //         this.MiVista.jTableLigas.setEnabled(true);
+            System.out.println("Antes de moostrar la tabla");
+        mostrarEnTabla(leagueArrayList);
+            System.out.println("Antes de actualizar el combobox");
+        actualizarComboBoxEquipos();
+            System.out.println("Despues de acturalizar combobox y antes del teleteTextView");
+        deleteTextView_Liga();
+            System.out.println("Despues del deletetexvier");
     }
 
     /*=========================================================================*/
@@ -265,9 +292,12 @@ public class Liga_Controlador implements ActionListener {
         for(String columna: nombreColumnaLeague){
             modeloLeague.addColumn(columna);
         }
-            
-            visibleControlTextView_Liga(true);
-            cargarDataBaseOLeerFichero(false);
+            System.out.println("test1");
+            for(int i = 0 ; i < leagueArrayList.size();i++){
+                System.out.println(leagueArrayList.get(i));
+            }
+            visibleControlTextView_Liga(false);
+            cargarDataBaseOLeerFichero(false);       
             actualizarComboBoxEquipos();
 
             
@@ -277,8 +307,7 @@ public class Liga_Controlador implements ActionListener {
         
         if(crear == true){
             Liga ObtenerLigas = new Liga();
-            leagueArrayList = ObtenerLigas.DataBaseLeague();
-           
+            leagueArrayList = ObtenerLigas.DataBaseLeague();          
             this.mostrarEnTabla(leagueArrayList);
             EscribirFichero();
         }else{
@@ -291,21 +320,44 @@ public class Liga_Controlador implements ActionListener {
     /*=========================================================================*/   
     public void EscribirFichero() throws FileNotFoundException, IOException {
 
-          File fichero = new File("FichLigas.dat");//declara el fichero
-          FileOutputStream fileout = new FileOutputStream(fichero,false);  //crea el flujo de salida
-           //conecta el flujo de bytes al flujo de datos
-          ObjectOutputStream dataOS = new ObjectOutputStream(fileout);  
-          
-          Object[] vectorObject = new Object[5];
+    System.out.println("Escribiendo en el fichero Liga...");
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-            for(int i = 0; i < leagueArrayList.size();i++){
-                dataOS.writeObject(leagueArrayList.get(i));
-                System.out.println( i+1 + " LIGAS GRABADAS");
-            }   
-            dataOS.close();  //cerrar stream de salida    
+      try{
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation implementation = builder.getDOMImplementation();
+        Document document = implementation.createDocument(null, "Ligas", null);
+        document.setXmlVersion("1.0"); 
+
+        /********************   RECOREMOS FICHERO    **************************/     
+            
+
+        for(int i =0; i < leagueArrayList.size(); i++){
+            Element raiz = document.createElement("Liga"); //nodo empleado
+            document.getDocumentElement().appendChild(raiz); 
+                //Añadir ID Liga                       
+                CrearElemento("ID_Liga",leagueArrayList.get(i).getID_Liga(), raiz, document);
+                //Añadir Nombre Liga
+                CrearElemento("Nombre_Liga",leagueArrayList.get(i).getNombre_Liga(), raiz, document); 
+                //Añadir Numero Equipos
+                CrearElemento("Num_Equipos",leagueArrayList.get(i).getNum_Equipos(), raiz, document); 
+                //Añadir NUmeros Ligas
+                CrearElemento("Num_Ligas",leagueArrayList.get(i).getNum_Ligas(), raiz,document); 
+                //Añadir Federación
+                CrearElemento("Federacion",leagueArrayList.get(i).getFederacion(), raiz,document);
+        }//fin del for que recorre el fichero
+
+        /********************   CREAMOS DOM     **************************/
+        Source source = new DOMSource(document);
+        Result result = new StreamResult(new java.io.File("Ligas.xml"));        
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(source, result);
+
+       }catch(Exception e){ System.err.println("Error: "+e); }
+
     }
     
-        public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {
+    public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {
 
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         SAXParser parser = parserFactory.newSAXParser();
@@ -314,7 +366,7 @@ public class Liga_Controlador implements ActionListener {
         procesadorXML.setContentHandler(gestor);
         InputSource fileXML = new InputSource("Ligas.xml"); 
         procesadorXML.parse(fileXML);
-            
+        
         mostrarEnTabla(leagueArrayList);
     }
 

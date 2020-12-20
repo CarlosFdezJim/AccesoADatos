@@ -4,6 +4,8 @@
 
 package Controlador;
 
+import static Controlador.CrearLigaXml.CrearElemento;
+import static Controlador.Liga_Controlador.leagueArrayList;
 import Modelo.Equipo;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -18,9 +20,21 @@ import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -123,6 +137,7 @@ public class Equipos_Controlador implements ActionListener{
         if(encontrado == false){
             modeloTeam.removeRow(fila);//elimino de la tabla
             teamArrayList.remove(fila);//elimino del arraylist
+            EscribirFichero();
         }else{
             JOptionPane.showMessageDialog(MiVista, "No se puede eliminar esta Equipo porque tiene jugadores relacionados.");
         }
@@ -190,6 +205,7 @@ public class Equipos_Controlador implements ActionListener{
         if(evento.getSource() == this.MiVista.jButtonAceptar_Equipos){
             try {
                 insertarDatos();
+                EscribirFichero();
             } catch (IOException ex) {
                 Logger.getLogger(Equipos_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -217,15 +233,22 @@ public class Equipos_Controlador implements ActionListener{
         if(evento.getSource() == this.MiVista.jButtonModificar_Equipos){
             try {
                 actualizarDatos();
+                EscribirFichero();
             } catch (IOException ex) {
                 Logger.getLogger(Equipos_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
             visibleControlTextView_Equipos(true);
         }
-            deleteTextView_Equipos();
-            mostrarEnTabla(teamArrayList);
-            actualizarComboBoxJugador();
             
+        try {
+            EscribirFichero();
+        } catch (IOException ex) {
+            Logger.getLogger(Equipos_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            mostrarEnTabla(teamArrayList);
+            visibleControlTextView_Equipos(true);
+            actualizarComboBoxJugador();
+            deleteTextView_Equipos();
     }
 
     /*=========================================================================*/
@@ -251,7 +274,7 @@ public class Equipos_Controlador implements ActionListener{
             modeloTeam.addColumn(columna);
         }
         
-//        visibleControlTextView_Equipos(false);
+        visibleControlTextView_Equipos(false);
         cargarDataBaseOLeerFichero(false);
         actualizarComboBoxJugador();
        
@@ -262,10 +285,11 @@ public class Equipos_Controlador implements ActionListener{
         if(crear == true){
             Equipo ObtenerEquipo = new Equipo();
             teamArrayList = ObtenerEquipo.DataBaseTeam();
-
             this.mostrarEnTabla(teamArrayList);
             EscribirFichero();
+            actualizarComboBoxJugador();
         }else{
+            
             mostrarEnTabla(teamArrayList);
             actualizarComboBoxJugador();
             LeerFichero();
@@ -275,19 +299,39 @@ public class Equipos_Controlador implements ActionListener{
  /*=========================================================================*/   
     public void EscribirFichero() throws FileNotFoundException, IOException {
 
-        File fichero = new File("FichEquipos.dat");//declara el fichero
-        FileOutputStream fileout = new FileOutputStream(fichero,false);  //crea el flujo de salida
-         //conecta el flujo de bytes al flujo de datos
-        ObjectOutputStream dataOS = new ObjectOutputStream(fileout);  
+     System.out.println("Escribiendo en el fichero Equipos...");
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-        Object[] vectorObject = new Object[5];
+      try{
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation implementation = builder.getDOMImplementation();
+        Document document = implementation.createDocument(null, "Equipos", null);
+        document.setXmlVersion("1.0"); 
 
+        /********************   RECOREMOS FICHERO    **************************/     
+            
+        for(int i =0; i < teamArrayList.size(); i++){
+            Element raiz = document.createElement("Equipo"); //nodo empleado
+            document.getDocumentElement().appendChild(raiz); 
+                //Añadir DNI                       
+                CrearElemento("ID_Equipo",teamArrayList.get(i).getIDequipo(), raiz, document);
+                //Añadir Nombre
+                CrearElemento("Nombre_Equipo",teamArrayList.get(i).getNombre_eq(), raiz, document); 
+                //Añadir Club
+                CrearElemento("Liga",teamArrayList.get(i).getLiga(), raiz, document); 
+                //Añadir Posición
+                CrearElemento("Num_Jugadores",teamArrayList.get(i).getNumJugadores(), raiz,document); 
+                //Añadir Dorsal
+                CrearElemento("Presupuesto",teamArrayList.get(i).getPresupuesto(), raiz,document);
+        }//fin del for que recorre el fichero
 
-          for(int i = 0; i < teamArrayList.size();i++){
-              dataOS.writeObject(teamArrayList.get(i));
-              System.out.println( i+1 + " EQUIPOS GRABADOS");
-          }   
-          dataOS.close();  //cerrar stream de salida    
+        /********************   CREAMOS DOM     **************************/
+        Source source = new DOMSource(document);
+        Result result = new StreamResult(new java.io.File("Equipos.xml"));        
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(source, result);
+
+       }catch(Exception e){ System.err.println("Error: "+e); } 
     }
     
     public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, SAXException, ParserConfigurationException {

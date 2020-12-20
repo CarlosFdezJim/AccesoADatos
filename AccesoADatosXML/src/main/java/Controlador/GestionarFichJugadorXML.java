@@ -26,13 +26,13 @@ public class GestionarFichJugadorXML extends DefaultHandler {
             case "DNI":
                 jg.setDNI(buffer.toString());
                 break;
-            case "Nombre":
-                jg.setDNI(buffer.toString());
+            case "Nombre_Jugador":
+                jg.setNombre_Jugador(buffer.toString());
                 break;
             case "Club":
                 jg.setClub(buffer.toString());
                 break;
-            case "Posición":
+            case "Posicion":
                 jg.setPosicion(buffer.toString());
                 break;
             case "Dorsal":
@@ -58,9 +58,9 @@ public class GestionarFichJugadorXML extends DefaultHandler {
                 Jugador_Controlador.playerArrayList.add(jg);
                 break;
             case "DNI":
-            case "Nombre":
+            case "Nombre_Jugador":
             case "Club":
-            case "Posición":
+            case "Posicion":
             case "Dorsal":
                 buffer.delete(0, buffer.length());
                 break;

@@ -1,5 +1,4 @@
 Vista\Vista$11.class
-Controlador\Jugador_Controlador$1.class
 Vista\Vista$5.class
 Vista\Vista.class
 Vista\Vista$16.class
@@ -8,12 +7,10 @@ Vista\Vista$3.class
 Vista\Vista$28.class
 Vista\Vista$18.class
 Vista\Vista$8.class
-Controlador\GestionarFichJugadorXML.class
 Vista\Vista$13.class
 Vista\Vista$23.class
 Vista\Vista$14.class
 Vista\Vista$1.class
-Controlador\GestionarFichLigasXML.class
 Modelo\Equipo.class
 Vista\Vista$24.class
 Vista\Vista$6.class
@@ -23,7 +20,6 @@ Controlador\Equipos_Controlador.class
 Vista\Vista$17.class
 Vista\Vista$20.class
 Vista\Vista$27.class
-Controlador\Jugador_Controlador.class
 Controlador\GestionarFichEquipoXML.class
 Vista\Vista$10.class
 Vista\Vista$12.class

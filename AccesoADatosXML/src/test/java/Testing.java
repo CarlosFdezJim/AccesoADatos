@@ -74,7 +74,7 @@ public class Testing {
         equipo.LeerFichero();
         jugador.LeerFichero();
     }
-    public void EscribirUnFichero() throws IOException{
+    public void EscribirUnFichero() throws IOException, SAXException{
         liga.EscribirFichero();
         equipo.EscribirFichero();
         jugador.EscribirFichero();

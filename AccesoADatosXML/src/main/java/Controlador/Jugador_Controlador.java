@@ -4,6 +4,7 @@
 
 package Controlador;
 
+import static Controlador.CrearJugadorXml.CrearElemento;
 import Modelo.Jugador;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -18,12 +19,25 @@ import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 
 public class Jugador_Controlador implements ActionListener {
@@ -31,6 +45,9 @@ public class Jugador_Controlador implements ActionListener {
     Vista MiVista;
     DefaultTableModel modeloPlayers;
     public static ArrayList<Jugador> playerArrayList = new ArrayList<Jugador>();
+    boolean insertar = false;
+    boolean modificar = false;
+    boolean eliminar = false;
  
     public Jugador_Controlador(Vista MiVista) {
         this.MiVista = MiVista;
@@ -48,7 +65,7 @@ public class Jugador_Controlador implements ActionListener {
         this.MiVista.jButtonCancelar_Jugador.addActionListener(this);
     }
 
-    public void insertarDatos() throws IOException{
+    public void insertarDatos() throws IOException, SAXException{
         int fila = 0;
         
         for(int i = 0; i< playerArrayList.size();i++){
@@ -83,7 +100,7 @@ public class Jugador_Controlador implements ActionListener {
         }
     }
     
-    public void actualizarDatos() throws IOException{
+    public void actualizarDatos() throws IOException, FileNotFoundException, SAXException{
         int fila = MiVista.jTableJugadores.getSelectedRow();
         
         Jugador jg1 = new Jugador();
@@ -111,7 +128,7 @@ public class Jugador_Controlador implements ActionListener {
         JOptionPane.showMessageDialog(MiVista, "Update Successfully...");
     }
     
-    public void deleteData() throws IOException{
+    public void deleteData() throws IOException, SAXException{
         int fila = MiVista.jTableJugadores.getSelectedRow();
         modeloPlayers.removeRow(fila);
         playerArrayList.remove(fila);//elimino del arraylist
@@ -177,19 +194,27 @@ public class Jugador_Controlador implements ActionListener {
         @Override
     public void actionPerformed(ActionEvent evento){
         if(evento.getSource() == this.MiVista.jButtonAceptar_Jugador){
-            try {
-                insertarDatos();
-            } catch (IOException ex) {
-                Logger.getLogger(Jugador_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-            }
+             if(insertar == true){
+                try {
+                    insertarDatos();
+                    EscribirFichero();
+                } catch (IOException ex) {
+                    Logger.getLogger(Jugador_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SAXException ex) {
+                    Logger.getLogger(Jugador_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+                }
+             }
+            insertar = false;
+            visibleControlTextView_Jugador(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonCancelar_Jugador){
             deleteTextView_Jugador();
+            visibleControlTextView_Jugador(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonInsertar_Jugador){
-            mostrarEnTabla(playerArrayList);
+            insertar = true;
             visibleControlTextView_Jugador(true);
         }
         
@@ -198,18 +223,23 @@ public class Jugador_Controlador implements ActionListener {
                 deleteData();
             } catch (IOException ex) {
                 Logger.getLogger(Equipos_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException ex) {
+                Logger.getLogger(Jugador_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
             deleteTextView_Jugador();
-            visibleControlTextView_Jugador(true);
+            visibleControlTextView_Jugador(false);
         }
         
         if(evento.getSource() == this.MiVista.jButtonModificar_Jugador){
             try {
                 actualizarDatos();
+                EscribirFichero();
             } catch (IOException ex) {
                 Logger.getLogger(Equipos_Controlador.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException ex) {
+                Logger.getLogger(Jugador_Controlador.class.getName()).log(Level.SEVERE, null, ex);
             }
-            visibleControlTextView_Jugador(true);
+            visibleControlTextView_Jugador(false);
         }
         deleteTextView_Jugador();
         mostrarEnTabla(playerArrayList);
@@ -238,6 +268,7 @@ public class Jugador_Controlador implements ActionListener {
         for(String columna: nombreColumnaPlayers){
             modeloPlayers.addColumn(columna);
         }
+        visibleControlTextView_Jugador(false);
         cargarDataBaseOLeerFichero(false);
 
     }
@@ -247,7 +278,6 @@ public class Jugador_Controlador implements ActionListener {
         if(crear == true){
             Jugador ObtenerJugadores = new Jugador();
             playerArrayList = ObtenerJugadores.DataBasePlayer();
-
             this.mostrarEnTabla(playerArrayList);
             EscribirFichero();
         }else{
@@ -256,21 +286,43 @@ public class Jugador_Controlador implements ActionListener {
          }
     }
      /*=========================================================================*/   
-    public void EscribirFichero() throws FileNotFoundException, IOException {
+    public void EscribirFichero() throws FileNotFoundException, IOException, SAXException {
 
-          File fichero = new File("FichPlayer.dat");//declara el fichero
-          FileOutputStream fileout = new FileOutputStream(fichero,false);  //crea el flujo de salida
-           //conecta el flujo de bytes al flujo de datos
-          ObjectOutputStream dataOS = new ObjectOutputStream(fileout);  
-          
-          Object[] vectorObject = new Object[5];
-          
+System.out.println("Escribiendo en el fichero Jugadores...");
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-            for(int i = 0; i < playerArrayList.size();i++){
-                dataOS.writeObject(playerArrayList.get(i));
-                System.out.println( i+1 + " JUGADORES GRABADOS");
-            }   
-            dataOS.close();  //cerrar stream de salida    
+      try{
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation implementation = builder.getDOMImplementation();
+        Document document = implementation.createDocument(null, "Jugadores", null);
+        document.setXmlVersion("1.0"); 
+
+        /********************   RECOREMOS FICHERO    **************************/     
+            
+       
+        for(int i =0; i < playerArrayList.size(); i++){
+            Element raiz = document.createElement("Jugador"); //nodo empleado
+            document.getDocumentElement().appendChild(raiz); 
+                //Añadir DNI                       
+                CrearElemento("DNI",playerArrayList.get(i).getDNI(), raiz, document);
+                //Añadir Nombre
+                CrearElemento("Nombre_Jugador",playerArrayList.get(i).getNombre_Jugador(), raiz, document); 
+                //Añadir Club
+                CrearElemento("Club",playerArrayList.get(i).getClub(), raiz, document); 
+                //Añadir Posición
+                CrearElemento("Posicion",playerArrayList.get(i).getPosicion(), raiz,document); 
+                //Añadir Dorsal
+                CrearElemento("Dorsal",playerArrayList.get(i).getDorsal(), raiz,document);
+        }//fin del for que recorre el fichero
+
+        /********************   CREAMOS DOM     **************************/
+        Source source = new DOMSource(document);
+        Result result = new StreamResult(new java.io.File("Jugadores.xml"));        
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(source, result);
+
+       }catch(Exception e){ System.err.println("Error: "+e); }
+     
     }
     
         public void LeerFichero() throws FileNotFoundException, IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
